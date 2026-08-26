@@ -1,10 +1,10 @@
 import json
 import os
 
-PARCELS_FILE = "parcel.json"
+PARCELS_FILE = "parcels.json"
 
 
-def load_percels():
+def load_parcels():
     """This function loads ledger"""
     if not os.path.exists(PARCELS_FILE):
         print("Ledger not found. Starting with an empty ledger.")
