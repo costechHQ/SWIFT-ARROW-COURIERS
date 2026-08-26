@@ -8,7 +8,7 @@ def load_percels():
     """This function loads ledger"""
     if not os.path.exists(PARCELS_FILE):
         print("Ledger not found. Starting with an empty ledger.")
-    return []
+        return []
     try:
         with open(PARCELS_FILE, "r") as file:
             parcels = json.load(file)
