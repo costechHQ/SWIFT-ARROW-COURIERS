@@ -35,9 +35,17 @@ def login(username, password, staff):
     return None
 
 def validate_token(token):
+    """validates a session token and retrieves the associated staff data"""
     session = active_tokens.get(token)
 
     if session is None:
         return None
 
     return session
+
+def logout(token):
+    """terminates an active staff session b y removing its token"""
+    if token in active_tokens:
+        del active_tokens[token]
+        return True
+    return False
