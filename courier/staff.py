@@ -48,19 +48,19 @@ def load_staff():
     with open(STAFF_FILE, "r") as file:
         return json.load(file)
 
-def login(username, password, staff):
-    """This function handles sercurity verification"""
-    for user in staff:
-        if user["username"] == username:
-            if verify_password(password, user["password_hash"]):
-                token = generate_token()
+# def login(username, password, staff):
+#     """This function handles sercurity verification"""
+#     for user in staff:
+#         if user["username"] == username:
+#             if verify_password(password, user["password_hash"]):
+#                 token = generate_token()
 
-                return {
-                    "token": token,
-                    "username": user["username"],
-                    "position": user["position"],
-                    "issued_at": time.time()
-                }
-        return None
+#                 return {
+#                     "token": token,
+#                     "username": user["username"],
+#                     "position": user["position"],
+#                     "issued_at": time.time()
+#                 }
+#         return None
         
-    return None
+#     return None

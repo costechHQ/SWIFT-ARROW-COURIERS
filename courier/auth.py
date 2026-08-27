@@ -51,4 +51,5 @@ def logout(token):
     return False
 
 def can_delete(session):
+    """checks if the logged-in staff has permission to del items"""
     return session["position"] == "Station Master"
