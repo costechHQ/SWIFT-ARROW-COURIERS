@@ -17,3 +17,16 @@ def get_parcel(tracking_code, parcels, tracking_index):
         "parcel": parcel,
         "milliseconds": elapsed
     }
+
+def format_parcel_result(result):
+    """formats a raw parcel dictionary into a human readable text block"""
+    parcel = result["parcel"]
+
+    return (
+        f"{parcel['tracking_code']} | "
+        f"{parcel['sender']} -> {parcel['receiver']}\n"
+        f"{parcel['origin']} -> {parcel['destination']} | "
+        f"{parcel['status']} | "
+        f"{parcel['weight_kg']} kg | "
+        f"shipped {parcel['date_shipped']}"
+    )
