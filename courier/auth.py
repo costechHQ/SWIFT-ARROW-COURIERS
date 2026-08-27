@@ -15,6 +15,8 @@ def generate_token():
 
 
 def login(username, password, staff):
+    """Authenticates a staff member and generates a secure session token."""
+
     for user in staff:
         if user["username"] == username:
             if verify_password(password, user["password_hash"]):
@@ -31,3 +33,11 @@ def login(username, password, staff):
             return None
         
     return None
+
+def validate_token(token):
+    session = active_tokens.get(token)
+
+    if session is None:
+        return None
+
+    return session
