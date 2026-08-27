@@ -1,4 +1,7 @@
 def build_index(parcels):
+    """This function creates an index 
+    memory map to optimize search performance"""
+    
     index = {}
 
     for position, parcel in enumerate(parcels):
