@@ -1,4 +1,5 @@
 def parse_slip(slip):
+    """parses a terminal command slip into a structured instruction dictionary"""
     parts = slip.strip().split()
 
     if len(parts) == 0:
@@ -35,3 +36,4 @@ def parse_slip(slip):
         }
 
     return None
+

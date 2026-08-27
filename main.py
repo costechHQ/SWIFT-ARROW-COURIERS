@@ -3,6 +3,7 @@ from courier.index import build_index
 from courier.services import get_parcel
 from courier.staff import load_staff
 from courier.auth import login, validate_token, logout
+from courier.parser import parse_slip
 
 
 parcels = load_parcels()
@@ -60,3 +61,6 @@ else:
             break
 
         print("Slip received:", slip)
+
+# print(parse_slip("GET parcel SA-1998550-IY"))
+# print(parse_slip("DANCE parcel SA-1998550-IY"))
