@@ -35,5 +35,14 @@ def load_staff():
         for user in INITIAL_STAFF:
             staff.append({
                 "username": user["username"],
-                
+                "password_hash": hash_password(user["password"]),
+                "position": user["position"]
             })
+
+        with open(STAFF_FILE, "w") as file:
+            json.dump(staff, file, indent=2)
+
+        return staff
+    
+    with open(STAFF_FILE, "r") as file:
+        return json.load(file)
