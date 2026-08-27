@@ -49,3 +49,6 @@ def logout(token):
         del active_tokens[token]
         return True
     return False
+
+def can_delete(session):
+    return session["position"] == "Station Master"
