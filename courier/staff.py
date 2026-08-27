@@ -49,7 +49,7 @@ def load_staff():
         return json.load(file)
 
 def login(username, password, staff):
-    """"""
+    """This function handles sercurity verification"""
     for user in staff:
         if user["username"] == username:
             if verify_password(password, user["password_hash"]):
