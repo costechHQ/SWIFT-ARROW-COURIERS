@@ -5,6 +5,7 @@ from courier.staff import load_staff
 from courier.auth import login, validate_token, logout
 from courier.parser import parse_slip
 from courier.storage import load_parcels, save_parcels
+from courier.ultils import read_float
 
 def main():
     parcels = load_parcels()
