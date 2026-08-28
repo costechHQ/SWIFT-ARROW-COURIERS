@@ -16,6 +16,16 @@ def parse_slip(slip):
     resource = parts[1].lower()
 
     if resource == "parcel":
+
+        if verb == "POST":
+            if len(parts) !=2:
+                return None
+            return {
+                "verb": verb,
+                "resource": resource,
+                "tracking_code": None
+            }
+        
         if len(parts) != 3:
             return None
 

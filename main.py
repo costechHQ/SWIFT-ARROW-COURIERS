@@ -92,17 +92,18 @@ def main():
                 else:
                     print(
                         f"{status} - Found in "
-                        f"{result['millseconds']:.3f} ms"
+                        f"{result['milliseconds']:.3f} ms"
                     )
                     print(format_parcel_result(result))
 
-                if (
+
+            elif (
                     request["verb"] == "POST"
                     and request["resource"] == "parcel"
-                ):
-                    print("\n--- NEW PARCEL ---")
+            ):
+                print("\n--- NEW PARCEL ---")
 
-                    parcel_data = {
+                parcel_data = {
                         "tracking_code": input("Tracking code: ").strip(),
                         "sender": input("Sender: ").strip(),
                         "receiver": input("Receiver: ").strip(),
@@ -111,22 +112,22 @@ def main():
                         "status": input("Status: ").strip(),
                         "weight_kg": input("Weight (kg): ").strip(),
                         "date_shipped": input("Date_shipped: ").strip()
-                    }
+                }
 
-                    status, result = create_parcel(
+                status, result = create_parcel(
                         parcel_data,
                         parcels,
                         tracking_index
-                    )
+                )
 
-                    if status == 201:
-                        save_parcels(parcels)
-                        print(f"201 - Parcel "
+                if status == 201:
+                    save_parcels(parcels)
+                    print(f"201 - Parcel "
                               f"{parcel_data['tracking_code']} registered successfully.")
-                    else:
-                        print(f"{status} - {result}")
+                else:
+                    print(f"{status} - {result}")
 
-                    continue
+                continue
 
 if __name__ == "__main__":
     main()

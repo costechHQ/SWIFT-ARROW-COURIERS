@@ -25,6 +25,11 @@ INITIAL_STAFF = [
         "username": "ngozi_front",
         "password": "desk2026",
         "position": "Clerk"
+    },
+    {
+        "username": "test",
+        "password": "test",
+        "position": "Clerk"
     }
 ]
 

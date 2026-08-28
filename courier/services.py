@@ -44,7 +44,7 @@ def create_parcel(parcel_data, parcels, tracking_index):
 
     required_fields = [
         "sender",
-        "reciever",
+        "receiver",
         "origin",
         "destination",
         "status",
