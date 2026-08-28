@@ -32,6 +32,8 @@ def format_parcel_result(result):
     )
 
 def create_parcel(parcel_data, parcels, tracking_index):
+    """validates and appends a new parcel to the tracking ledger
+    """
     tracking_code = parcel_data.get("tracking_code")
 
     if not tracking_code:

@@ -1,9 +1,10 @@
 from courier.storage import load_parcels
 from courier.index import build_index
-from courier.services import get_parcel, format_parcel_result
+from courier.services import get_parcel, format_parcel_result, create_parcel
 from courier.staff import load_staff
 from courier.auth import login, validate_token, logout
 from courier.parser import parse_slip
+from courier.storage import load_parcels, save_parcels
 
 def main():
     parcels = load_parcels()
@@ -93,6 +94,38 @@ def main():
                         f"{result['millseconds']:.3f} ms"
                     )
                     print(format_parcel_result(result))
+
+                if (
+                    request["verb"] == "POST"
+                    and request["resource"] == "parcel"
+                ):
+                    print("\n--- NEW PARCEL ---")
+
+                    parcel_data = {
+                        "tracking_code": input("Tracking code: ").strip(),
+                        "sender": input("Sender: ").strip(),
+                        "receiver": input("Receiver: ").strip(),
+                        "origin": input("Origin: ").strip(),
+                        "destination": input("Destination: ").strip(),
+                        "status": input("Status: ").strip(),
+                        "weight_kg": input("Weight (kg): ").strip(),
+                        "date_shipped": input("Date_shipped: ").strip()
+                    }
+
+                    status, result = create_parcel(
+                        parcel_data,
+                        parcels,
+                        tracking_index
+                    )
+
+                    if status == 201:
+                        save_parcels(parcels)
+                        print(f"201 - Parcel "
+                              f"{parcel_data['tracking_code']} registered successfully.")
+                    else:
+                        print(f"{status} - {result}")
+
+                    continue
 
 if __name__ == "__main__":
     main()

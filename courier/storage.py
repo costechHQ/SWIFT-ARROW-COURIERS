@@ -23,6 +23,6 @@ def load_parcels():
         return []
 
 
-def sav_parcels(parcels):
+def save_parcels(parcels):
     with open(PARCELS_FILE, "w") as file:
         json.dump(parcels, file, indent=2)
