@@ -30,3 +30,34 @@ def format_parcel_result(result):
         f"{parcel['weight_kg']} kg | "
         f"shipped {parcel['date_shipped']}"
     )
+
+def create_parcel(parcel_data, parcels, tracking_index):
+    tracking_code = parcel_data.get("tracking_code")
+
+    if not tracking_code:
+        return 400, "Tracking code is required."
+
+    if tracking_code in tracking_index:
+        return 400, f"Parcel {tracking_code} already exist."
+
+    required_fields = [
+        "sender",
+        "reciever",
+        "origin",
+        "destination",
+        "status",
+        "weight_kg",
+        "date_shipped"
+    ]
+
+    for field in required_fields:
+        if field not in parcel_data:
+            return 400, f"Missing field: {field}"
+
+    position = len(parcels)
+
+    parcels.append(parcel_data)
+
+    tracking_index[tracking_code] = position
+
+    return 201, parcel_data
