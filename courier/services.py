@@ -1,22 +1,37 @@
 import time
 
-def get_parcel(tracking_code, parcels, tracking_index):
+def get_parcel(tracking_code, parcels, tracking_index, cache):
+    cached_result = cache.get(tracking_code)
+
+    if cached_result is not None:
+        return 200, cached_result, True
+
     start_time = time.perf_counter()
 
     position = tracking_index.get(tracking_code)
 
     if position is None:
         elapsed = (time.perf_counter() - start_time) * 1000
-        return 404, f"Parcel {tracking_code} not found. Search took {elapsed:.3f} ms"
+
+        return (
+            404, 
+            f"There is no parcel {tracking_code}." 
+            f"Search took {elapsed:.3f} ms",
+            False
+        )
 
     parcel = parcels[position]
 
     elapsed = (time.perf_counter() - start_time) * 1000
 
-    return 200, {
+    result = {
         "parcel": parcel,
         "milliseconds": elapsed
     }
+
+    cache.set(tracking_code, result)
+
+    return 200, result, False
 
 def format_parcel_result(result):
     """formats a raw parcel dictionary into a human readable text block"""

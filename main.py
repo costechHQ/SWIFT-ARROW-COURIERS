@@ -11,11 +11,16 @@ from courier.auth import login, validate_token, logout
 from courier.parser import parse_slip
 from courier.storage import load_parcels, save_parcels
 from courier.ultils import read_float
+from courier.cache import Cache
+
+
+
 
 def main():
     parcels = load_parcels()
     tracking_index = build_index(parcels)
     staff = load_staff()
+    cache = Cache(10)
 
     # print("Parcels loaded:", len(parcels))
     # print("Index enteries:", len(tracking_index))
@@ -86,16 +91,25 @@ def main():
                 request["verb"] == "GET"
                 and request["resource"] == "parcel"
             ):
-                status, result = get_parcel(
+                status, result, from_cache = get_parcel(
                     request["tracking_code"],
                     parcels,
-                    tracking_index
+                    tracking_index,
+                    cache
                 )
 
                 if status == 404:
                     print(f"{status} - {result}")
-                else:
-                    print(
+
+                else: 
+                    if from_cache:
+                        print(
+                            f"{status} - Found in "
+                            f"{result['milliseconds']:3f} ms "
+                            f"(from the tray)"
+                        )
+                    else:
+                     print(
                         f"{status} - Found in "
                         f"{result['milliseconds']:.3f} ms"
                     )
