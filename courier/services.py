@@ -56,9 +56,22 @@ def create_parcel(parcel_data, parcels, tracking_index):
         if field not in parcel_data:
             return 400, f"Missing field: {field}"
 
-    position = len(parcels)
+    # position = len(parcels)
 
-    parcels.append(parcel_data)
+    # parcels.append(parcel_data)
+
+    position = None
+
+    for i, parcel in enumerate(parcels):
+        if parcel is None:
+            position = i
+            break
+
+    if position is None:
+        position = len(parcels)
+        parcels.append(parcel_data)
+    else:
+        parcels[position] = parcel_data
 
     tracking_index[tracking_code] = position
 
