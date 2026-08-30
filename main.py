@@ -1,6 +1,11 @@
 from courier.storage import load_parcels
 from courier.index import build_index
-from courier.services import get_parcel, format_parcel_result, create_parcel
+from courier.services import (
+    get_parcel,
+    format_parcel_result,
+    create_parcel,
+    update_parcel)
+format_parcel_result, create_parcel
 from courier.staff import load_staff
 from courier.auth import login, validate_token, logout
 from courier.parser import parse_slip
@@ -124,6 +129,40 @@ def main():
                     save_parcels(parcels)
                     print(f"201 - Parcel "
                               f"{parcel_data['tracking_code']} registered successfully.")
+                else:
+                    print(f"{status} - {result}")
+
+                continue
+
+            elif (
+                request["verb"] == "PUT"
+                and request["resource"] == "parcel"
+            ):
+                tracking_code = request["tracking_code"]
+
+                print("\n--- UPDATE PARCEL ---")
+
+                new_status = input("New status: ").strip()
+
+                if not new_status:
+                    print("400 - Status cannot be empty.")
+                    continue
+
+                status, result = update_parcel(
+                    tracking_code,
+                    new_status,
+                    parcels,
+                    tracking_index
+                )
+
+                if status == 200:
+                    save_parcels(parcels)
+
+                    print(
+                        f"200 - Parcel {tracking_code}"
+                        f"updated successfully."
+                    )
+
                 else:
                     print(f"{status} - {result}")
 
