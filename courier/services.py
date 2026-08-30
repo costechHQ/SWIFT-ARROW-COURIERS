@@ -93,7 +93,8 @@ def create_parcel(parcel_data, parcels, tracking_index):
     return 201, parcel_data
 
 
-def update_parcel(tracking_code, new_status, parcels, track_index):
+def update_parcel(tracking_code, new_status, parcels, track_index, cache):
+
     position = track_index.get(tracking_code)
 
     if position is None:
@@ -105,5 +106,7 @@ def update_parcel(tracking_code, new_status, parcels, track_index):
         return 404, f"There is no parcel {tracking_code}."
 
     parcel["status"] = new_status
+
+    cache.delete(tracking_code)
 
     return 200, parcel

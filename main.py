@@ -166,7 +166,8 @@ def main():
                     tracking_code,
                     new_status,
                     parcels,
-                    tracking_index
+                    tracking_index,
+                    cache
                 )
 
                 if status == 200:
