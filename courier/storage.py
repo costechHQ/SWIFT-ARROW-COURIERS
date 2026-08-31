@@ -14,6 +14,31 @@ def create_hash():
 
 #print(create_hash())
 
+def save_hash():
+    hash_value = create_hash()
+
+    with open(SEAL_FILE, "w") as file:
+        file.write(hash_value)
+
+# save_hash()
+
+def verify_hash():
+    if not os.path.exists(SEAL_FILE):
+        save_hash()
+        return True
+    
+    with open(SEAL_FILE, "r") as file:
+        saved_hash = file.read()
+
+    current_hash = create_hash()
+
+    if saved_hash == current_hash:
+        return True
+
+    return False
+
+print(verify_hash())
+
 
 
 
