@@ -18,6 +18,10 @@ from courier.cache import Cache
 
 
 def main():
+    if not verify_hash():
+        print("401 - Ledger integrity check failed. The ledger may have been changed.")
+        return
+        
     parcels = load_parcels()
     tracking_index = build_index(parcels)
     staff = load_staff()
