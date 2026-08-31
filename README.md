@@ -1,5 +1,8 @@
 # Swift Arrow Couriers
 
+
+[![wakatime](https://wakatime.com/badge/github/costechHQ/SWIFT-ARROW-COURIERS.svg)](https://wakatime.com/badge/github/costechHQ/SWIFT-ARROW-COURIERS)
+
 ## About
 
 Swift Arrow Couriers is a Python terminal-based parcel tracking system. It allows staff to log in and perform operations such as finding, creating and updating parcels.
