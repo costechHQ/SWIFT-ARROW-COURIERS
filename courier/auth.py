@@ -36,9 +36,16 @@ def login(username, password, staff):
 
 def validate_token(token):
     """validates a session token and retrieves the associated staff data"""
+
     session = active_tokens.get(token)
 
     if session is None:
+        return None
+
+    token_age = time.time() - session["issued_at"]
+
+    if token_age > 300:
+        del active_tokens[token]
         return None
 
     return session
