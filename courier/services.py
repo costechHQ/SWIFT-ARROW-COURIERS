@@ -149,4 +149,42 @@ def get_parcel_by_destination(destination, parcels, index, cache):
         }
     )
 
+
+def get_parcels_by_status(status, parcels, index, cache):
+
+    cache_key = f"status:{status}"
+
+    cached_result = cache.get(cache_key)
+
+    if cached_result is not None:
+        return 200, cached_result["results"], cached_result["milliseconds"], True
+
+    start_time = time.perf_counter()
+
+    positions = index["by_status"].get(status)
+
+    if positions is None:
+        elapsed = (time.perf_counter() - start_time) * 1000
+        return (
+            404,
+            f"There are no parcels with status {status}.",
+            elapsed,
+            False
+        )
+
+    results = []
+
+    for position in positions:
+        results.append(parcels[position])
+
+    elapsed = (time.perf_counter() - start_time) * 1000
+
+    cache.set(
+        cache_key,
+        {
+            "results": results,
+            "milliseconds": elapsed
+        }
+    )
+
     return 200, results, elapsed, False

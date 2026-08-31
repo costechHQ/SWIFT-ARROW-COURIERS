@@ -1,11 +1,14 @@
 from courier.storage import load_parcels
 from courier.index import build_index
+
 from courier.services import (
     get_parcel,
     format_parcel_result,
     create_parcel,
     update_parcel,
-    get_parcel_by_destination)
+    get_parcel_by_destination,
+    get_parcels_by_status)
+
 format_parcel_result, create_parcel
 from courier.staff import load_staff
 from courier.auth import login, validate_token, logout

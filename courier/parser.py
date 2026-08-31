@@ -36,14 +36,23 @@ def parse_slip(slip):
         }
 
     if resource == "parcels":
-        if len(parts) != 4 or parts[2].lower() != "to":
-            return None
 
-        return {
-            "verb": verb,
-            "resource": resource,
-            "destination": " ".join(parts[3:])
-        }
+        if len(parts) >= 4 and parts[2].lower() == "to":
+        
+            return {
+                "verb": verb,
+                "resource": resource,
+                "destination": " ".join(parts[3:])
+            }
+
+        if len(parts) >= 5 and parts[2].lower() == "out":
+        
+            return {
+                "verb": verb,
+                "resource": resource,
+                "destination": " ".join(parts[2:])
+            }
+
 
     return None
 
