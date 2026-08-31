@@ -4,7 +4,8 @@ from courier.services import (
     get_parcel,
     format_parcel_result,
     create_parcel,
-    update_parcel)
+    update_parcel,
+    get_parcel_by_destination)
 format_parcel_result, create_parcel
 from courier.staff import load_staff
 from courier.auth import login, validate_token, logout
@@ -114,6 +115,34 @@ def main():
                         f"{result['milliseconds']:.3f} ms"
                     )
                     print(format_parcel_result(result))
+
+            elif (
+                request["verb"] == "GET"
+                and request["resource"] == "parcels"
+            ):
+                destination = request["destination"]
+
+                status, result = get_parcel_by_destination(
+                    destination,
+                    parcels,
+                    tracking_index
+                )
+
+                if status == 404:
+                    print(f"{status} - {result}")
+                else:
+                    print(
+                        f"{status} - {len(result)} parcel found."
+                    )
+
+                    for parcel in result:
+                        print(
+                            f"{parcel['tracking_code']} | "
+                            f"{parcel['sender']} -> "
+                            f"{parcel['receiver']} | "
+                            f"{parcel['status']}"
+                        )
+                continue
 
 
             elif (

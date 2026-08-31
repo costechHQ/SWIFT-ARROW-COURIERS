@@ -110,3 +110,16 @@ def update_parcel(tracking_code, new_status, parcels, track_index, cache):
     cache.delete(tracking_code)
 
     return 200, parcel
+
+def get_parcel_by_destination(city, parcels, index):
+
+    positions = index["by_destination"].get(city)
+
+    if positions is None:
+        return 404, f"There are no parcels heading to {city}."
+    results = []
+
+    for position in positions:
+        results.append(parcels[position])
+
+    return 200, results
