@@ -1,5 +1,6 @@
 import time
 
+
 def get_parcel(tracking_code, parcels, tracking_index, cache):
     cached_result = cache.get(tracking_code)
 
@@ -14,8 +15,8 @@ def get_parcel(tracking_code, parcels, tracking_index, cache):
         elapsed = (time.perf_counter() - start_time) * 1000
 
         return (
-            404, 
-            f"There is no parcel {tracking_code}." 
+            404,
+            f"There is no parcel {tracking_code}. "
             f"Search took {elapsed:.3f} ms",
             False
         )
@@ -33,8 +34,10 @@ def get_parcel(tracking_code, parcels, tracking_index, cache):
 
     return 200, result, False
 
+
 def format_parcel_result(result):
-    """formats a raw parcel dictionary into a human readable text block"""
+    """Formats a raw parcel dictionary into a human readable text block."""
+
     parcel = result["parcel"]
 
     return (
@@ -46,15 +49,16 @@ def format_parcel_result(result):
         f"shipped {parcel['date_shipped']}"
     )
 
+
 def create_parcel(parcel_data, parcels, tracking_index):
-    """validates and appends a new parcel to the tracking ledger
-    """
+    """Validates and appends a new parcel to the tracking ledger."""
+
     tracking_code = parcel_data.get("tracking_code")
 
     if not tracking_code:
         return 400, "Tracking code is required."
 
-    if tracking_code in tracking_index:
+    if tracking_code in tracking_index["by_tracking_code"]:
         return 400, f"Parcel {tracking_code} already exist."
 
     required_fields = [
@@ -71,10 +75,6 @@ def create_parcel(parcel_data, parcels, tracking_index):
         if field not in parcel_data:
             return 400, f"Missing field: {field}"
 
-    # position = len(parcels)
-
-    # parcels.append(parcel_data)
-
     position = None
 
     for i, parcel in enumerate(parcels):
@@ -88,13 +88,24 @@ def create_parcel(parcel_data, parcels, tracking_index):
     else:
         parcels[position] = parcel_data
 
-    tracking_index[tracking_code] = position
+    tracking_index["by_tracking_code"][tracking_code] = position
+
+    destination = parcel_data["destination"]
+    if destination not in tracking_index["by_destination"]:
+        tracking_index["by_destination"][destination] = []
+
+    tracking_index["by_destination"][destination].append(position)
+
+    parcel_status = parcel_data["status"]
+    if parcel_status not in tracking_index["by_status"]:
+        tracking_index["by_status"][parcel_status] = []
+
+    tracking_index["by_status"][parcel_status].append(position)
 
     return 201, parcel_data
 
 
 def update_parcel(tracking_code, new_status, parcels, track_index, cache):
-
     position = track_index["by_tracking_code"].get(tracking_code)
 
     if position is None:
@@ -105,11 +116,25 @@ def update_parcel(tracking_code, new_status, parcels, track_index, cache):
     if parcel is None:
         return 404, f"There is no parcel {tracking_code}."
 
+    old_status = parcel["status"]
+
+    if old_status in track_index["by_status"]:
+        if position in track_index["by_status"][old_status]:
+            track_index["by_status"][old_status].remove(position)
+
+    if new_status not in track_index["by_status"]:
+        track_index["by_status"][new_status] = []
+
+    track_index["by_status"][new_status].append(position)
+
     parcel["status"] = new_status
 
     cache.delete(tracking_code)
+    cache.delete(f"status:{old_status}")
+    cache.delete(f"status:{new_status}")
 
     return 200, parcel
+
 
 def get_parcel_by_destination(destination, parcels, index, cache):
 
@@ -118,7 +143,12 @@ def get_parcel_by_destination(destination, parcels, index, cache):
     cached_result = cache.get(cache_key)
 
     if cached_result is not None:
-        return 200, cached_result["results"], cached_result["milliseconds"], True
+        return (
+            200,
+            cached_result["results"],
+            cached_result["milliseconds"],
+            True
+        )
 
     start_time = time.perf_counter()
 
@@ -133,7 +163,7 @@ def get_parcel_by_destination(destination, parcels, index, cache):
             elapsed,
             False
         )
-    
+
     results = []
 
     for position in positions:
@@ -149,6 +179,8 @@ def get_parcel_by_destination(destination, parcels, index, cache):
         }
     )
 
+    return 200, results, elapsed, False
+
 
 def get_parcels_by_status(status, parcels, index, cache):
 
@@ -157,7 +189,12 @@ def get_parcels_by_status(status, parcels, index, cache):
     cached_result = cache.get(cache_key)
 
     if cached_result is not None:
-        return 200, cached_result["results"], cached_result["milliseconds"], True
+        return (
+            200,
+            cached_result["results"],
+            cached_result["milliseconds"],
+            True
+        )
 
     start_time = time.perf_counter()
 
@@ -165,6 +202,7 @@ def get_parcels_by_status(status, parcels, index, cache):
 
     if positions is None:
         elapsed = (time.perf_counter() - start_time) * 1000
+
         return (
             404,
             f"There are no parcels with status {status}.",

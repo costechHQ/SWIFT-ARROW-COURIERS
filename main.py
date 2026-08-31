@@ -1,24 +1,18 @@
-from courier.storage import load_parcels
+from courier.storage import load_parcels, save_parcels, verify_hash
 from courier.index import build_index
-
 from courier.services import (
     get_parcel,
     format_parcel_result,
     create_parcel,
     update_parcel,
     get_parcel_by_destination,
-    get_parcels_by_status)
-
-format_parcel_result, create_parcel
+    get_parcels_by_status
+)
 from courier.staff import load_staff
 from courier.auth import login, validate_token, logout
 from courier.parser import parse_slip
-from courier.storage import load_parcels, save_parcels, verify_hash
-from courier.ultils import read_float
+from courier.utils import read_float
 from courier.cache import Cache
-
-
-
 
 def main():
     if not verify_hash():
@@ -98,6 +92,7 @@ def main():
                 )
                 continue
 
+            #GET PARCEL (SINGLE)
             if (
                 request["verb"] == "GET"
                 and request["resource"] == "parcel"
@@ -111,33 +106,46 @@ def main():
 
                 if status == 404:
                     print(f"{status} - {result}")
-
-                else: 
+                else:
                     if from_cache:
                         print(
                             f"{status} - Found in "
-                            f"{result['milliseconds']:3f} ms "
+                            f"{result['milliseconds']:.3f} ms "
                             f"(from the tray)"
                         )
                     else:
                         print(
-                        f"{status} - Found in "
-                        f"{result['milliseconds']:.3f} ms"
-                    )
+                            f"{status} - Found in "
+                            f"{result['milliseconds']:.3f} ms"
+                        )
                     print(format_parcel_result(result))
 
+            # GET PARCELS (BULK SEARCH VIA CITY OR STATUS) 
             elif (
                 request["verb"] == "GET"
                 and request["resource"] == "parcels"
             ):
-                destination = request["destination"]
+                if "destination" in request:
+                    destination = request["destination"]
+                    status, result, milliseconds, from_cache = get_parcel_by_destination(
+                        destination,
+                        parcels,
+                        tracking_index,
+                        cache
+                    )
 
-                status, result, milliseconds, from_cache = get_parcel_by_destination(
-                    destination,
-                    parcels,
-                    tracking_index,
-                    cache
-                )
+                elif "status" in request:
+                    parcel_status = request["status"]
+                    status, result, milliseconds, from_cache = get_parcels_by_status(
+                        parcel_status,
+                        parcels,
+                        tracking_index,
+                        cache
+                    )
+
+                else:
+                    print("400 - Invalid parcels request.")
+                    continue
 
                 if status == 404:
                     print(f"{status} - {result}")
@@ -148,7 +156,7 @@ def main():
                             f"in {milliseconds:.3f} ms (from the tray)"
                         )
                     else:
-                         print(
+                        print(
                             f"{status} - {len(result)} parcel found "
                             f"in {milliseconds:.3f} ms."
                         )
@@ -162,34 +170,32 @@ def main():
                         )
                 continue
 
-
             elif (
-                    request["verb"] == "POST"
-                    and request["resource"] == "parcel"
+                request["verb"] == "POST"
+                and request["resource"] == "parcel"
             ):
                 print("\n--- NEW PARCEL ---")
 
                 parcel_data = {
-                        "tracking_code": input("Tracking code: ").strip(),
-                        "sender": input("Sender: ").strip(),
-                        "receiver": input("Receiver: ").strip(),
-                        "origin": input("Origin: ").strip(),
-                        "destination": input("Destination: ").strip(),
-                        "status": input("Status: ").strip(),
-                        "weight_kg": input("Weight (kg): ").strip(),
-                        "date_shipped": input("Date_shipped: ").strip()
+                    "tracking_code": input("Tracking code: ").strip(),
+                    "sender": input("Sender: ").strip(),
+                    "receiver": input("Receiver: ").strip(),
+                    "origin": input("Origin: ").strip(),
+                    "destination": input("Destination: ").strip(),
+                    "status": input("Status: ").strip(),
+                    "weight_kg": input("Weight (kg): ").strip(),
+                    "date_shipped": input("Date_shipped: ").strip()
                 }
 
                 status, result = create_parcel(
-                        parcel_data,
-                        parcels,
-                        tracking_index
+                    parcel_data,
+                    parcels,
+                    tracking_index
                 )
 
                 if status == 201:
                     save_parcels(parcels)
-                    print(f"201 - Parcel "
-                              f"{parcel_data['tracking_code']} registered successfully.")
+                    print(f"201 - Parcel {parcel_data['tracking_code']} registered successfully.")
                 else:
                     print(f"{status} - {result}")
 
@@ -202,7 +208,6 @@ def main():
                 tracking_code = request["tracking_code"]
 
                 print("\n--- UPDATE PARCEL ---")
-
                 new_status = input("New status: ").strip()
 
                 if not new_status:
@@ -219,12 +224,7 @@ def main():
 
                 if status == 200:
                     save_parcels(parcels)
-
-                    print(
-                        f"200 - Parcel {tracking_code}"
-                        f"updated successfully."
-                    )
-
+                    print(f"200 - Parcel {tracking_code} updated successfully.")
                 else:
                     print(f"{status} - {result}")
 
