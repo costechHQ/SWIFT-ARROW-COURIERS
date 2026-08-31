@@ -111,12 +111,21 @@ def update_parcel(tracking_code, new_status, parcels, track_index, cache):
 
     return 200, parcel
 
-def get_parcel_by_destination(city, parcels, index):
+def get_parcel_by_destination(destination, parcels, index):
 
-    positions = index["by_destination"].get(city)
+    start_time = time.perf_counter()
+
+    positions = index["by_destination"].get(destination)
 
     if positions is None:
-        return 404, f"There are no parcels heading to {city}."
+        elapsed = (time.perf_counter() - start_time) * 1000
+
+        return (
+            404, 
+            f"There are no parcels heading to {destination}.",
+            elapsed
+        )
+    
     results = []
 
     for position in positions:

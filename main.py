@@ -110,7 +110,7 @@ def main():
                             f"(from the tray)"
                         )
                     else:
-                     print(
+                        print(
                         f"{status} - Found in "
                         f"{result['milliseconds']:.3f} ms"
                     )
@@ -122,7 +122,7 @@ def main():
             ):
                 destination = request["destination"]
 
-                status, result = get_parcel_by_destination(
+                status, result, milliseconds = get_parcel_by_destination(
                     destination,
                     parcels,
                     tracking_index
@@ -132,7 +132,8 @@ def main():
                     print(f"{status} - {result}")
                 else:
                     print(
-                        f"{status} - {len(result)} parcel found."
+                        f"{status} - {len(result)} parcel found "
+                        f"in {milliseconds:.3f} ms."
                     )
 
                     for parcel in result:
