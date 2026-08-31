@@ -111,7 +111,14 @@ def update_parcel(tracking_code, new_status, parcels, track_index, cache):
 
     return 200, parcel
 
-def get_parcel_by_destination(destination, parcels, index):
+def get_parcel_by_destination(destination, parcels, index, cache):
+
+    cache_key = f"destination:{destination}"
+
+    cached_result = cache.get(cache_key)
+
+    if cached_result is not None:
+        return 200, cached_result["results"], cached_result["milliseconds"], True
 
     start_time = time.perf_counter()
 
@@ -121,7 +128,7 @@ def get_parcel_by_destination(destination, parcels, index):
         elapsed = (time.perf_counter() - start_time) * 1000
 
         return (
-            404, 
+            404,
             f"There are no parcels heading to {destination}.",
             elapsed
         )
@@ -131,4 +138,14 @@ def get_parcel_by_destination(destination, parcels, index):
     for position in positions:
         results.append(parcels[position])
 
-    return 200, results
+    elapsed = (time.perf_counter() - start_time) * 1000
+
+    cache.set(
+        cache_key,
+        {
+            "results": results,
+            "milliseconds": elapsed
+        }
+    )
+
+    return 200, results, elapsed, False

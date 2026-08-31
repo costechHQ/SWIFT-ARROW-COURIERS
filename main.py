@@ -122,19 +122,26 @@ def main():
             ):
                 destination = request["destination"]
 
-                status, result, milliseconds = get_parcel_by_destination(
+                status, result, milliseconds, from_cache = get_parcel_by_destination(
                     destination,
                     parcels,
-                    tracking_index
+                    tracking_index,
+                    cache
                 )
 
                 if status == 404:
                     print(f"{status} - {result}")
                 else:
-                    print(
-                        f"{status} - {len(result)} parcel found "
-                        f"in {milliseconds:.3f} ms."
-                    )
+                    if from_cache:
+                        print(
+                            f"{status} - {len(result)} parcel found "
+                            f"in {milliseconds:.3f} ms (from the tray)"
+                        )
+                    else:
+                         print(
+                            f"{status} - {len(result)} parcel found "
+                            f"in {milliseconds:.3f} ms."
+                        )
 
                     for parcel in result:
                         print(
