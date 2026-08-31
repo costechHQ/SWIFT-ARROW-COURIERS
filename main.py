@@ -23,6 +23,9 @@ def main():
     staff = load_staff()
     cache = Cache(10)
 
+    # print("TEST INDEX:", tracking_index["by_tracking_code"].get("SA-1998500-IY"))
+    # print("TEST PARCEL:", parcels[0])
+
     # print("Parcels loaded:", len(parcels))
     # print("Index enteries:", len(tracking_index))
 

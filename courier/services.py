@@ -8,7 +8,7 @@ def get_parcel(tracking_code, parcels, tracking_index, cache):
 
     start_time = time.perf_counter()
 
-    position = tracking_index.get(tracking_code)
+    position = tracking_index["by_tracking_code"].get(tracking_code)
 
     if position is None:
         elapsed = (time.perf_counter() - start_time) * 1000
@@ -95,7 +95,7 @@ def create_parcel(parcel_data, parcels, tracking_index):
 
 def update_parcel(tracking_code, new_status, parcels, track_index, cache):
 
-    position = track_index.get(tracking_code)
+    position = track_index["by_tracking_code"].get(tracking_code)
 
     if position is None:
         return 404, f"There is no parcel {tracking_code}."
@@ -130,7 +130,8 @@ def get_parcel_by_destination(destination, parcels, index, cache):
         return (
             404,
             f"There are no parcels heading to {destination}.",
-            elapsed
+            elapsed,
+            False
         )
     
     results = []

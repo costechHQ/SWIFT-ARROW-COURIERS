@@ -5,7 +5,7 @@
     "receiver": "Uche Igwe",
     "origin": "Ibadan",
     "destination": "Aba",
-    "status": "delivered",
+    "status": "in transit",
     "weight_kg": 35.3,
     "date_shipped": "2026-08-25"
   },
