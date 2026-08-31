@@ -1,7 +1,20 @@
 import json
 import os
+import hashlib
 
 PARCELS_FILE = "parcels.json"
+SEAL_FILE = "ledger_seal.txt"
+
+
+def create_hash():
+    with open(PARCELS_FILE, "r") as file:
+        content = file.read()
+
+    return hashlib.sha256(content.encode()).hexdigest()
+
+#print(create_hash())
+
+
 
 
 def load_parcels():
